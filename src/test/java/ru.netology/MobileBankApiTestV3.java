@@ -1,11 +1,13 @@
-package ru.netology.rest;
+package ru.netology;
 
+import io.restassured.http.ContentType;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
+import static org.hamcrest.Matchers.*;
 
-class MobileBankApiTestV4 {
+class MobileBankApiTestV3 {
     @Test
     void shouldReturnDemoAccounts() {
       // Given - When - Then
@@ -18,7 +20,11 @@ class MobileBankApiTestV4 {
       // Проверки
       .then()
           .statusCode(200)
-          .body(matchesJsonSchemaInClasspath("accounts.schema.json"))
+          // специализированные проверки - лучше
+          .contentType(ContentType.JSON)
+          .body("", hasSize(3))
+          .body("[0].currency", equalTo("RUB"))
+          .body("[0].balance", greaterThanOrEqualTo(0))
       ;
     }
 }
